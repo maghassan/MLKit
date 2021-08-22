@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     FirebaseVisionImage image;
     FirebaseVisionFaceDetector  detector;
 
+    Bitmap  bitmap;
+
+    private ImageView   displayImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,14 +49,21 @@ public class MainActivity extends AppCompatActivity {
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent  intent  =   new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getPackageManager()) !=  null)   {
-                    startActivityForResult(intent,  REQUEST_IMAGE_CAPTURE);
-                }   else {
-                    Toast.makeText(MainActivity.this,   "Something went wrong", Toast.LENGTH_LONG).show();
-                }
+                startCamera();
             }
         });
+
+        displayImage    =   findViewById(R.id.displayImage);
+    }
+
+    private void startCamera() {
+
+        Intent  intent  =   new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) !=  null)   {
+            startActivityForResult(intent,  REQUEST_IMAGE_CAPTURE);
+        }   else {
+            Toast.makeText(MainActivity.this,   "Something went wrong", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -60,8 +72,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode ==  REQUEST_IMAGE_CAPTURE   &&  resultCode  ==  RESULT_OK)  {
             Bundle  extra   =   data.getExtras();
-            Bitmap  bitmap  =   (Bitmap)    extra.get("data");
+            bitmap  =   (Bitmap)    extra.get("data");
             detectFace(bitmap);
+            displayImage.setImageBitmap(bitmap);
         }
     }
 
@@ -87,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                         String  resultText  =   "";
                         int i   =   1;
                         for (FirebaseVisionFace face    :   firebaseVisionFaces)    {
-                            resultText  =   resultText.concat("\nFACE NUMBER. " +   i   +   ": ")
+                            resultText  =   resultText.concat("\nFACE NUMBER: " +   i   +   ": ")
                                     .concat("\nSmile: " +   face.getSmilingProbability()    *100    +   "%")
                                     .concat("\nleft eye open: " +   face.getLeftEyeOpenProbability()    *100    +   "%")
                                     .concat("\nright eye open: "  +   face.getRightEyeOpenProbability()   *100    +   "%");
@@ -96,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
                         if (firebaseVisionFaces.size()  ==  0)  {
                             Toast.makeText(MainActivity.this,   "No Face Detected", Toast.LENGTH_LONG).show();
+                            cameraButton.setText("Re Capture");
                         }   else {
                             Bundle  bundle  =   new Bundle();
                             bundle.putString(LCOFaceDetection.RESULT_TEXT,  resultText);
