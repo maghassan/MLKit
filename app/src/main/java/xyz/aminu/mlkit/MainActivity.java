@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,9 +20,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.ml.vision.FirebaseVision;
 import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.common.FirebaseVisionPoint;
 import com.google.firebase.ml.vision.face.FirebaseVisionFace;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceLandmark;
 
 import java.util.List;
 
@@ -37,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
     Bitmap  bitmap;
 
     private ImageView   displayImage;
+    private TextView    leftEye;
+
+    float   finalImageProb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FirebaseApp.initializeApp(this);
+
+        leftEye =   findViewById(R.id.leftEyeBlink);
 
         cameraButton    =   findViewById(R.id.camera_button);
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -105,12 +113,29 @@ public class MainActivity extends AppCompatActivity {
                                     .concat("\nleft eye open: " +   face.getLeftEyeOpenProbability()    *100    +   "%")
                                     .concat("\nright eye open: "  +   face.getRightEyeOpenProbability()   *100    +   "%");
                             i++;
+
+                            FirebaseVisionFaceLandmark  leftEyeBlink    =   face.getLandmark(FirebaseVisionFaceLandmark.LEFT_EYE);
+                            float   eyeProb  =   face.getSmilingProbability();
+                            if (leftEyeBlink    !=  null)   {
+                                FirebaseVisionPoint leftEyePro  =   leftEyeBlink.getPosition();
+                                leftEye.setText("Left Eye Good");
+                            }
+
+                            if (eyeProb != 100){
+                                float   finalProb   =   eyeProb;
+                                finalImageProb  =   finalProb;
+                                String  prob    =   "";
+                                leftEye.setText("Please blink your left eye: "  +   prob);
+                                leftEye.setTextColor(880808);
+                            }
                         }
 
                         if (firebaseVisionFaces.size()  ==  0)  {
                             Toast.makeText(MainActivity.this,   "No Face Detected", Toast.LENGTH_LONG).show();
                             cameraButton.setText("Re Capture");
-                        }   else {
+                        }
+
+                        else {
                             Bundle  bundle  =   new Bundle();
                             bundle.putString(LCOFaceDetection.RESULT_TEXT,  resultText);
                             DialogFragment  resultDialog  =   new ResultDialog();
