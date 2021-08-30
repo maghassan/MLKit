@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     Bitmap  bitmap;
 
     private ImageView   displayImage;
-    private TextView    leftEye;
+    private TextView    leftEye,    result_text_view,   face_recognition_text,  smiling_prob;
 
     float   finalImageProb;
 
@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
 
         leftEye =   findViewById(R.id.leftEyeBlink);
+        result_text_view    =   findViewById(R.id.result_text_view);
+        face_recognition_text   =   findViewById(R.id.face_recognition_text);
+        smiling_prob    =   findViewById(R.id.smiling_prob_text);
 
         cameraButton    =   findViewById(R.id.camera_button);
         cameraButton.setOnClickListener(new View.OnClickListener() {
@@ -114,25 +117,47 @@ public class MainActivity extends AppCompatActivity {
                                     .concat("\nright eye open: "  +   face.getRightEyeOpenProbability()   *100    +   "%");
                             i++;
 
-                            FirebaseVisionFaceLandmark  leftEyeBlink    =   face.getLandmark(FirebaseVisionFaceLandmark.LEFT_EYE);
-                            float   eyeProb  =   face.getSmilingProbability();
-                            if (leftEyeBlink    !=  null)   {
-                                FirebaseVisionPoint leftEyePro  =   leftEyeBlink.getPosition();
-                                leftEye.setText("Left Eye Good");
+                            float   leftEyeProb =   face.getLeftEyeOpenProbability()    *100;
+                            float   smilingProb =   face.getSmilingProbability()    *100;
+
+                            if (leftEyeProb    <=   90) {
+                                leftEye.setText("Please open your blink eyes: "   +face.getLeftEyeOpenProbability()   *100    +   "%");
+                                leftEye.setTextColor(getResources().getColor(R.color.red));
+                            }   else    if (leftEyeProb >=90){
+                                leftEye.setText("Left eye correct");
+                                leftEye.setTextColor(getResources().getColor(R.color.green));
                             }
 
-                            if (eyeProb != 100){
-                                float   finalProb   =   eyeProb;
-                                finalImageProb  =   finalProb;
-                                String  prob    =   "";
-                                leftEye.setText("Please blink your left eye: "  +   prob);
-                                leftEye.setTextColor(880808);
+                            if (smilingProb <=90)   {
+                                smiling_prob.setText("Please smile");
+                                smiling_prob.setTextColor(getResources().getColor(R.color.red));
+                            }   else if (smilingProb    >=  90) {
+                                smiling_prob.setText("Beautiful Smile");
+                                smiling_prob.setTextColor(getResources().getColor(R.color.green));
                             }
+
+                            /*if (face.getLeftEyeOpenProbability()    !=  FirebaseVisionFace.UNCOMPUTED_PROBABILITY){
+                                float   finalEyeProb =   face.getLeftEyeOpenProbability();
+                                finalImageProb  = eyeProb *100;
+                                String  prob    =   "";
+                                *//*if (finalEyeProb    <   90) {
+                                    *//**//*leftEye.setText("Please blink your left eye: "  +   prob);
+                                    leftEye.setTextColor(880808);*//**//*
+
+                                }*//*
+                            }   else    if (finalImageProb  <   90){
+                                resultText  =   resultText.concat("\nPlease open your eyes" +   face.getLeftEyeOpenProbability()    *100    +   "%");
+                            }*/
                         }
 
                         if (firebaseVisionFaces.size()  ==  0)  {
                             Toast.makeText(MainActivity.this,   "No Face Detected", Toast.LENGTH_LONG).show();
                             cameraButton.setText("Re Capture");
+                            face_recognition_text.setText("No Face Detected");
+                            face_recognition_text.setTextColor(getResources().getColor(R.color.red));
+                        }   else    if (firebaseVisionFaces.size()  >   0){
+                            face_recognition_text.setText("Face Detected");
+                            face_recognition_text.setTextColor(getResources().getColor(R.color.green));
                         }
 
                         else {
@@ -142,6 +167,8 @@ public class MainActivity extends AppCompatActivity {
                             resultDialog.setArguments(bundle);
                             resultDialog.setCancelable(true);
                             resultDialog.show(getSupportFragmentManager(),  LCOFaceDetection.RESULT_DIALOG);
+
+                            //result_text_view.setText(LCOFaceDetection.RESULT_TEXT, TextView.BufferType.valueOf(resultText));
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
