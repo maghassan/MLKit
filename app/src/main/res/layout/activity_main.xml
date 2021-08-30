@@ -12,36 +12,30 @@
         android:id="@+id/displayImage"
         android:layout_width="match_parent"
         android:layout_height="256dp"
-        android:layout_margin="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/camera_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.192" />
+        android:layout_margin="8dp" />
 
     <TextView
         android:id="@+id/leftEyeBlink"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"/>
+        android:layout_margin="8dp"/>
+
+    <TextView
+        android:id="@+id/rightEyeBlink"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"/>
 
     <TextView
         android:id="@+id/face_recognition_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_margin="8dp"/>
 
     <TextView
         android:id="@+id/smiling_prob_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_margin="8dp"/>
 
     <Button

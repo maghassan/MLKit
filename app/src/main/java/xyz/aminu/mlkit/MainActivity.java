@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     Bitmap  bitmap;
 
     private ImageView   displayImage;
-    private TextView    leftEye,    result_text_view,   face_recognition_text,  smiling_prob;
+    private TextView    leftEye,    rightEye,    result_text_view,   face_recognition_text,  smiling_prob;
 
     float   finalImageProb;
 
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseApp.initializeApp(this);
 
         leftEye =   findViewById(R.id.leftEyeBlink);
+        rightEye    =   findViewById(R.id.rightEyeBlink);
         result_text_view    =   findViewById(R.id.result_text_view);
         face_recognition_text   =   findViewById(R.id.face_recognition_text);
         smiling_prob    =   findViewById(R.id.smiling_prob_text);
@@ -118,20 +119,29 @@ public class MainActivity extends AppCompatActivity {
                             i++;
 
                             float   leftEyeProb =   face.getLeftEyeOpenProbability()    *100;
+                            float   rightEyeProb    =   face.getRightEyeOpenProbability()   *100;
                             float   smilingProb =   face.getSmilingProbability()    *100;
 
                             if (leftEyeProb    <=   90) {
-                                leftEye.setText("Please open your blink eyes: "   +face.getLeftEyeOpenProbability()   *100    +   "%");
+                                leftEye.setText("Please open blink your left eye: "   +face.getLeftEyeOpenProbability()   *100    +   "%");
                                 leftEye.setTextColor(getResources().getColor(R.color.red));
                             }   else    if (leftEyeProb >=90){
                                 leftEye.setText("Left eye correct");
                                 leftEye.setTextColor(getResources().getColor(R.color.green));
                             }
 
-                            if (smilingProb <=90)   {
+                            if (rightEyeProb    <=   90) {
+                                rightEye.setText("Please open blink your right eye: "   +face.getLeftEyeOpenProbability()   *100    +   "%");
+                                rightEye.setTextColor(getResources().getColor(R.color.red));
+                            }   else    if (leftEyeProb >=90){
+                                rightEye.setText("Right eye correct");
+                                rightEye.setTextColor(getResources().getColor(R.color.green));
+                            }
+
+                            if (smilingProb <=  50)   {
                                 smiling_prob.setText("Please smile");
                                 smiling_prob.setTextColor(getResources().getColor(R.color.red));
-                            }   else if (smilingProb    >=  90) {
+                            }   else if (smilingProb    >=  50) {
                                 smiling_prob.setText("Beautiful Smile");
                                 smiling_prob.setTextColor(getResources().getColor(R.color.green));
                             }
