@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button  cameraButton;
 
-    private final static int    REQUEST_IMAGE_CAPTURE   =   124;
+    private final static int    REQUEST_IMAGE_CAPTURE   =   0;
 
     FirebaseVisionImage image;
     FirebaseVisionFaceDetector  detector;
@@ -96,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
                 .setModeType(FirebaseVisionFaceDetectorOptions.ACCURATE_MODE)
                 .setLandmarkType(FirebaseVisionFaceDetectorOptions.ALL_LANDMARKS)
                 .setClassificationType(FirebaseVisionFaceDetectorOptions.ALL_CLASSIFICATIONS)
+                .setMinFaceSize(0.1f)
+                .setTrackingEnabled(true)
                 .build();
 
         try {
